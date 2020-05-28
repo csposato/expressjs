@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+const fetch = require('node-fetch');
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -20,6 +22,35 @@ app.get('/', function(req, res) {
     };
     res.send(respuesta);
 });
+app.route('/dogs')
+    .get(function (req, res) {
+        const url = 'http://localhost:4000/external';
+        const options = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Accept-Charset': 'utf-8'
+            }
+        };
+        respuesta = {
+            error: false,
+            codigo: 200,
+            mensaje: ''
+        };
+        fetch(url, options)
+            .then(function(response) {
+                console.log('Calling ', url);
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('Sending data...');
+                res.send(data);
+                console.log('Data ok!');
+            })
+            .catch(function(err) {
+                console.error('Error: ' + err);
+            });
+    });
 app.route('/usuario')
     .get(function (req, res) {
         respuesta = {
