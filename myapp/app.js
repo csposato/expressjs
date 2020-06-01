@@ -1,6 +1,13 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
+var env = require('node-env-file');
+env('./.env');
+
+const PORT_IN = process.env.PORT_IN || '3000';
+const DOG_SERVICE_URL = process.env.DOG_SERVICE_URL || 'http://localhost:';
+const DOG_SERVICE_PORT = process.env.DOG_SERVICE_PORT || '4000';
+const DOG_SERVICE_PATH = process.env.DOG_SERVICE_PATH || '/external';
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,7 +31,7 @@ app.get('/', function(req, res) {
 });
 app.route('/dogs')
     .get(function (req, res) {
-        const url = 'http://localhost:4000/external';
+        const url = DOG_SERVICE_URL + DOG_SERVICE_PORT + DOG_SERVICE_PATH;
         const options = {
             method: 'GET',
             headers: {
@@ -162,6 +169,6 @@ app.use(function(req, res, next) {
     };
     res.status(404).send(respuesta);
 });
-app.listen(3000, () => {
-    console.log("El servidor está inicializado en el puerto 3000");
+app.listen(PORT_IN, () => {
+    console.log("El servidor está inicializado en el puerto: ", PORT_IN);
 });
